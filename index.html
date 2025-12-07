@@ -1,0 +1,2836 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام متابعات المخالفات السكنية الجامعية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1a3a8f 0%, #2d55b8 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-content h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .header-content h1 i {
+            color: #4cc9f0;
+        }
+        
+        .header-content p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+        
+        .user-role {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .role-admin {
+            color: #f39c12;
+        }
+        
+        .role-assistant {
+            color: #2ecc71;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn-new-case, .btn-share, .btn-admin, .btn-logout {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+        }
+        
+        .btn-share {
+            background-color: #9b59b6;
+        }
+        
+        .btn-admin {
+            background-color: #f39c12;
+        }
+        
+        .btn-logout {
+            background-color: #e74c3c;
+        }
+        
+        .btn-share:hover {
+            background-color: #8e44ad;
+        }
+        
+        .btn-admin:hover {
+            background-color: #d68910;
+        }
+        
+        .btn-logout:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-new-case:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(46, 204, 113, 0.4);
+        }
+        
+        .stats {
+            display: flex;
+            gap: 25px;
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 15px 25px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .stat-box {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #4cc9f0;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .filters {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            color: #1a3a8f;
+        }
+        
+        select, .search-box {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background-color: #f8f9fa;
+            font-size: 15px;
+            min-width: 180px;
+        }
+        
+        .search-box {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231a3a8f' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+        
+        .rooms-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .room-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-top: 5px solid #2d55b8;
+            position: relative;
+            width: 100%;
+        }
+        
+        .room-card.closed {
+            opacity: 0.8;
+            border-top-color: #95a5a6;
+        }
+        
+        .room-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .room-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        .room-number {
+            background-color: #1a3a8f;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .room-card.closed .room-number {
+            background-color: #95a5a6;
+        }
+        
+        .room-details {
+            flex: 1;
+        }
+        
+        .room-details h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+            color: #1a3a8f;
+        }
+        
+        .room-card.closed .room-details h3 {
+            color: #7f8c8d;
+        }
+        
+        .unit-badge {
+            background-color: #e9f7fe;
+            color: #1a3a8f;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+        
+        .room-card.closed .unit-badge {
+            background-color: #ecf0f1;
+            color: #7f8c8d;
+        }
+        
+        .added-by {
+            font-size: 12px;
+            color: #666;
+            margin-top: 3px;
+        }
+        
+        .assistant-code {
+            font-size: 11px;
+            color: #3498db;
+            margin-top: 2px;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .violation-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .violation-title i {
+            color: #e74c3c;
+        }
+        
+        .violation-text {
+            color: #555;
+            line-height: 1.7;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-right: 4px solid #e9f7fe;
+            margin-bottom: 15px;
+        }
+        
+        .room-card.closed .violation-text {
+            background-color: #ecf0f1;
+            border-right-color: #bdc3c7;
+        }
+        
+        /* تحسين عرض بيانات المخالفة */
+        .violation-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .detail-item {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            border-right: 3px solid #3498db;
+        }
+        
+        .detail-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+        
+        .detail-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        /* أنيميشن للأولوية العالية */
+        .priority-high .room-number {
+            background-color: #e74c3c;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        }
+        
+        .priority-medium .room-number {
+            background-color: #f39c12;
+        }
+        
+        .priority-low .room-number {
+            background-color: #2ecc71;
+        }
+        
+        /* تعديل الألوان حسب الأولوية */
+        .priority-high {
+            border-top-color: #e74c3c !important;
+        }
+        
+        .priority-medium {
+            border-top-color: #f39c12 !important;
+        }
+        
+        .priority-low {
+            border-top-color: #2ecc71 !important;
+        }
+        
+        /* تحسين عرض الأولوية */
+        .priority-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .priority-high-badge {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+        
+        .priority-medium-badge {
+            background-color: #fff3e0;
+            color: #ef6c00;
+            border: 1px solid #ffe0b2;
+        }
+        
+        .priority-low-badge {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+        
+        /* إضافة رمز القفل */
+        .locked-indicator {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: #f39c12;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        
+        .room-card.locked .locked-indicator {
+            background-color: #e74c3c;
+        }
+        
+        .room-card.locked {
+            border-left: 5px solid #e74c3c;
+        }
+        
+        .lock-status {
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background-color: #f8f9fa;
+            color: #7f8c8d;
+            border: 1px solid #ddd;
+            margin-right: 5px;
+        }
+        
+        .lock-status.locked {
+            background-color: #fff3cd;
+            color: #856404;
+            border-color: #ffeaa7;
+        }
+        
+        .status-change-section {
+            margin-top: 15px;
+            border-top: 1px dashed #ddd;
+            padding-top: 15px;
+        }
+        
+        .status-change-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .status-btn {
+            padding: 8px 15px;
+            border-radius: 6px;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .btn-pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .btn-resolved {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .btn-failed {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status-btn.active {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+        }
+        
+        .reason-input {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .card-footer {
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .room-card.closed .card-footer {
+            background-color: #ecf0f1;
+        }
+        
+        .status {
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-resolved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-failed {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-closed {
+            background-color: #95a5a6;
+            color: white;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            background-color: #1a3a8f;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .action-btn:hover {
+            background-color: #2d55b8;
+        }
+        
+        .action-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .btn-edit {
+            background-color: #3498db;
+        }
+        
+        .btn-edit:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-delete {
+            background-color: #e74c3c;
+        }
+        
+        .btn-delete:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-update {
+            background-color: #2ecc71;
+        }
+        
+        .btn-update:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-close {
+            background-color: #9b59b6;
+        }
+        
+        .btn-close:hover {
+            background-color: #8e44ad;
+        }
+        
+        .lock-btn {
+            background-color: #9b59b6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .lock-btn:hover {
+            background-color: #8e44ad;
+        }
+        
+        .lock-btn.locked {
+            background-color: #e74c3c;
+        }
+        
+        .lock-btn.locked:hover {
+            background-color: #c0392b;
+        }
+        
+        .locked-info {
+            background-color: #fff8e1;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-right: 4px solid #ffd54f;
+            font-size: 14px;
+        }
+        
+        .locked-info i {
+            color: #f39c12;
+            margin-left: 5px;
+        }
+        
+        /* نافذة تسجيل الدخول */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+        
+        .login-modal {
+            background-color: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, #1a3a8f 0%, #2d55b8 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .login-header h2 {
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .login-body {
+            padding: 25px;
+        }
+        
+        .login-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .login-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .login-tab.active {
+            color: #1a3a8f;
+            border-bottom-color: #1a3a8f;
+        }
+        
+        .login-tab:hover {
+            color: #2d55b8;
+        }
+        
+        .login-form {
+            display: none;
+        }
+        
+        .login-form.active {
+            display: block;
+        }
+        
+        .login-footer {
+            padding: 20px 25px;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .btn-login {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 600;
+        }
+        
+        .btn-login:hover {
+            background-color: #27ae60;
+        }
+        
+        /* نافذة إنشاء حالة جديدة */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .modal {
+            background-color: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #1a3a8f 0%, #2d55b8 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        
+        .close-modal:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .modal-body {
+            padding: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group label.required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 15px;
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .modal-footer {
+            padding: 20px 25px;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+        
+        .btn-cancel {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-submit {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 600;
+        }
+        
+        .btn-cancel:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-submit:hover {
+            background-color: #27ae60;
+        }
+        
+        /* نافذة الإدارة */
+        .admin-modal .modal {
+            max-width: 600px;
+        }
+        
+        .admin-tabs {
+            display: flex;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 20px;
+        }
+        
+        .admin-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .admin-tab.active {
+            color: #1a3a8f;
+            border-bottom-color: #1a3a8f;
+        }
+        
+        .admin-section {
+            display: none;
+        }
+        
+        .admin-section.active {
+            display: block;
+        }
+        
+        .users-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .user-item:last-child {
+            border-bottom: none;
+        }
+        
+        .user-info-small {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name {
+            font-weight: 600;
+        }
+        
+        .user-role-badge {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background-color: #e9f7fe;
+            color: #1a3a8f;
+            display: inline-block;
+            margin-top: 3px;
+        }
+        
+        .role-admin-badge {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .role-assistant-badge {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .admin-section h3 {
+            color: #1a3a8f;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .admin-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .admin-info-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .admin-info-label {
+            font-weight: 600;
+            color: #1a3a8f;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .admin-info-value {
+            font-size: 18px;
+            color: #333;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid #ddd;
+            margin-top: 30px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .loading i {
+            font-size: 40px;
+            color: #1a3a8f;
+            margin-bottom: 15px;
+        }
+        
+        /* نافذة تأكيد الحذف */
+        .confirmation-modal .modal {
+            max-width: 400px;
+        }
+        
+        .confirmation-text {
+            text-align: center;
+            padding: 20px 0;
+            font-size: 16px;
+        }
+        
+        .confirmation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn-confirm {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .btn-confirm:hover {
+            background-color: #c0392b;
+        }
+        
+        /* نافذة تعديل المخالفة */
+        .edit-modal .modal {
+            max-width: 500px;
+        }
+        
+        @media (max-width: 768px) {
+            .rooms-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content h1 {
+                font-size: 24px;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .filter-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .card-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .card-actions .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .violation-details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="mainContainer" style="display: none;">
+        <header>
+            <div class="header-content">
+                <h1><i class="fas fa-building"></i> نظام متابعات المخالفات السكنية الجامعية</h1>
+                <p>لوحة إدارة ومتابعة المخالفات السكنية في الجامعات</p>
+            </div>
+            <div class="header-actions">
+                <div class="user-info" id="userInfo">
+                    <i class="fas fa-user"></i>
+                    <span id="userName">مستخدم</span>
+                    <span class="user-role" id="userRole">دور</span>
+                </div>
+                <button class="btn-new-case" id="newCaseBtn">
+                    <i class="fas fa-plus-circle"></i> إنشاء حالة جديدة
+                </button>
+                <button class="btn-admin" id="adminBtn" style="display: none;">
+                    <i class="fas fa-cog"></i> الإدارة
+                </button>
+                <button class="btn-logout" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                </button>
+            </div>
+        </header>
+        
+        <div class="admin-section" id="adminSection">
+            <h3><i class="fas fa-chart-bar"></i> إحصائيات النظام</h3>
+            <div class="admin-info">
+                <div class="admin-info-item">
+                    <div class="admin-info-label">إجمالي المخالفات</div>
+                    <div class="admin-info-value" id="totalCases">0</div>
+                </div>
+                <div class="admin-info-item">
+                    <div class="admin-info-label">الوحدات المغطاة</div>
+                    <div class="admin-info-value" id="totalUnits">0</div>
+                </div>
+                <div class="admin-info-item">
+                    <div class="admin-info-label">آخر تحديث</div>
+                    <div class="admin-info-value" id="lastUpdate">جاري التحميل...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-value" id="statsTotalCases">0</div>
+                <div class="stat-label">مخالفة</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="statsTotalUnits">0</div>
+                <div class="stat-label">وحدات</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="statsPendingCases">0</div>
+                <div class="stat-label">قيد المتابعة</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="statsResolvedCases">0</div>
+                <div class="stat-label">تمت المتابعة</div>
+            </div>
+        </div>
+        
+        <div class="filters">
+            <div class="filter-group">
+                <label for="unitFilter"><i class="fas fa-filter"></i> تصفية حسب الوحدة:</label>
+                <select id="unitFilter">
+                    <option value="all">جميع الوحدات</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="statusFilter"><i class="fas fa-tasks"></i> حالة المتابعة:</label>
+                <select id="statusFilter">
+                    <option value="all">جميع الحالات</option>
+                    <option value="pending">قيد المتابعة</option>
+                    <option value="resolved">تمت المتابعة</option>
+                    <option value="failed">تعذرت المتابعة</option>
+                    <option value="closed">مغلقة</option>
+                </select>
+            </div>
+            
+            <input type="text" class="search-box" placeholder="ابحث برقم الغرفة..." id="searchBox">
+        </div>
+        
+        <div class="rooms-container" id="roomsContainer">
+            <div class="loading" id="loadingIndicator">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>جاري تحميل المخالفات...</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 نظام متابعات المخالفات السكنية الجامعية - جميع الحقوق محفوظة | <span id="currentDate"></span></p>
+            <p>النظام يعمل على التخزين المحلي للمتصفح</p>
+        </footer>
+    </div>
+    
+    <!-- نافذة تسجيل الدخول -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-modal">
+            <div class="login-header">
+                <h2><i class="fas fa-user-shield"></i> نظام متابعات المخالفات</h2>
+                <p>الرجاء تسجيل الدخول للوصول للنظام</p>
+            </div>
+            <div class="login-body">
+                <div class="login-tabs">
+                    <div class="login-tab active" data-tab="admin">المشرف الرئيسي</div>
+                    <div class="login-tab" data-tab="assistant">مساعد مشرف</div>
+                </div>
+                
+                <form class="login-form active" id="adminLoginForm">
+                    <div class="form-group">
+                        <label for="adminName">اسم المشرف</label>
+                        <input type="text" id="adminName" class="form-control" placeholder="أدخل اسم المشرف" required>
+                        <small style="color: #666; font-size: 12px;">للمشرف الرئيسي: أدخل "المشرف الرئيسي"</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminPassword">كلمة مرور المشرف</label>
+                        <input type="password" id="adminPassword" class="form-control" placeholder="أدخل كلمة المرور" required>
+                        <small style="color: #666; font-size: 12px;">كلمة المرور الافتراضية للمشرف الرئيسي: admin123</small>
+                    </div>
+                </form>
+                
+                <form class="login-form" id="assistantLoginForm">
+                    <div class="form-group">
+                        <label for="assistantCode">الرمز السري للمساعد</label>
+                        <input type="text" id="assistantCode" class="form-control" placeholder="أدخل الرمز السري" required>
+                        <small style="color: #666; font-size: 12px;">اطلب الرمز من المشرف الرئيسي</small>
+                    </div>
+                </form>
+            </div>
+            <div class="login-footer">
+                <button type="button" class="btn-login" id="loginBtn">تسجيل الدخول</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- نافذة إنشاء حالة جديدة -->
+    <div class="modal-overlay" id="newCaseModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus-circle"></i> إنشاء حالة جديدة</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="newCaseForm">
+                    <div class="form-group">
+                        <label for="roomNumber" class="required">رقم الغرفة</label>
+                        <input type="text" id="roomNumber" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bedNumber">رقم السرير</label>
+                        <select id="bedNumber" class="form-control">
+                            <option value="">اختر رقم السرير</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="unitNumber" class="required">الوحدة</label>
+                        <select id="unitNumber" class="form-control" required>
+                            <option value="">اختر الوحدة</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="supervisorName" class="required">اسم مساعد المشرف</label>
+                        <input type="text" id="supervisorName" class="form-control" placeholder="أدخل اسم مساعد المشرف" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="studentName">اسم المخالف</label>
+                        <input type="text" id="studentName" class="form-control" placeholder="أدخل اسم المخالف">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="studentId">الرقم الجامعي للمخالف</label>
+                        <input type="text" id="studentId" class="form-control" placeholder="أدخل الرقم الجامعي">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="violationDetails" class="required">تفاصيل المخالفة</label>
+                        <textarea id="violationDetails" class="form-control" placeholder="أدخل تفاصيل المخالفة..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="priority" class="required">الأولوية</label>
+                        <select id="priority" class="form-control" required>
+                            <option value="high">عالية</option>
+                            <option value="medium" selected>متوسطة</option>
+                            <option value="low">منخفضة</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" id="cancelBtn">إلغاء</button>
+                <button type="button" class="btn-submit" id="submitNewCase">إضافة المخالفة</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- نافذة تعديل المخالفة -->
+    <div class="modal-overlay edit-modal" id="editCaseModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-edit"></i> تعديل المخالفة</h2>
+                <button class="close-modal" id="closeEditModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editCaseForm">
+                    <div class="form-group">
+                        <label for="editRoomNumber" class="required">رقم الغرفة</label>
+                        <input type="text" id="editRoomNumber" class="form-control" required readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editBedNumber">رقم السرير</label>
+                        <select id="editBedNumber" class="form-control" disabled>
+                            <option value="">اختر رقم السرير</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editUnitNumber" class="required">الوحدة</label>
+                        <select id="editUnitNumber" class="form-control" required disabled>
+                            <option value="">اختر الوحدة</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editSupervisorName" class="required">اسم مساعد المشرف</label>
+                        <input type="text" id="editSupervisorName" class="form-control" required readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editStudentName">اسم المخالف</label>
+                        <input type="text" id="editStudentName" class="form-control" placeholder="أدخل اسم المخالف" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editStudentId">الرقم الجامعي للمخالف</label>
+                        <input type="text" id="editStudentId" class="form-control" placeholder="أدخل الرقم الجامعي" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editViolationDetails" class="required">تفاصيل المخالفة</label>
+                        <textarea id="editViolationDetails" class="form-control" required readonly></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editPriority" class="required">الأولوية</label>
+                        <select id="editPriority" class="form-control" required>
+                            <option value="high">عالية</option>
+                            <option value="medium">متوسطة</option>
+                            <option value="low">منخفضة</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editStatus" class="required">حالة المتابعة</label>
+                        <select id="editStatus" class="form-control" required>
+                            <option value="pending">قيد المتابعة</option>
+                            <option value="resolved">تمت المتابعة</option>
+                            <option value="failed">تعذرت المتابعة</option>
+                            <option value="closed">مغلقة</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="editReasonGroup" style="display: none;">
+                        <label for="editReason">سبب تعذر المتابعة</label>
+                        <textarea id="editReason" class="form-control" placeholder="أدخل سبب تعذر المتابعة..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" id="cancelEditBtn">إلغاء</button>
+                <button type="button" class="btn-submit" id="submitEditCase">حفظ التعديلات</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- نافذة الإدارة -->
+    <div class="modal-overlay admin-modal" id="adminModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-cog"></i> لوحة الإدارة</h2>
+                <button class="close-modal" id="closeAdminModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="admin-tabs">
+                    <div class="admin-tab active" data-tab="users">إدارة المستخدمين</div>
+                    <div class="admin-tab" data-tab="system">إعدادات النظام</div>
+                </div>
+                
+                <div class="admin-section active" id="usersSection">
+                    <h3><i class="fas fa-users"></i> إدارة المستخدمين</h3>
+                    <div class="form-group">
+                        <label>إضافة مشرف جديد</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="newAdminName" class="form-control" placeholder="اسم المشرف الجديد">
+                            <input type="password" id="newAdminPassword" class="form-control" placeholder="كلمة المرور">
+                            <button class="btn-submit" id="addAdminBtn" style="white-space: nowrap;">إضافة مشرف</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>إضافة مساعد مشرف جديد</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="newAssistantName" class="form-control" placeholder="اسم المساعد الجديد">
+                            <button class="btn-submit" id="generateAssistantBtn" style="white-space: nowrap;">إنشاء رمز</button>
+                        </div>
+                        <div id="assistantCodeResult" style="margin-top: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 6px; display: none;">
+                            <strong>الرمز السري:</strong> <span id="generatedCode"></span><br>
+                            <small>أعط هذا الرقم للمساعد ليدخل به إلى النظام</small>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin-top: 20px;"><i class="fas fa-list"></i> قائمة المستخدمين</h3>
+                    <div class="users-list" id="usersList">
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>جاري تحميل قائمة المستخدمين...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="admin-section" id="systemSection">
+                    <h3><i class="fas fa-sliders-h"></i> إعدادات النظام</h3>
+                    <div class="form-group">
+                        <label>تغيير كلمة مرور المشرف الرئيسي</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="password" id="currentPassword" class="form-control" placeholder="كلمة المرور الحالية">
+                            <input type="password" id="newPassword" class="form-control" placeholder="كلمة المرور الجديدة">
+                            <button class="btn-submit" id="changePasswordBtn" style="white-space: nowrap;">تغيير</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>خيارات النظام</label>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <label style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" id="allowAssistantEdit" checked>
+                                السماح للمساعدين بتعديل حالاتهم
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" id="autoCloseResolved" checked>
+                                إغلاق الحالات المكتملة تلقائياً بعد 7 أيام
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>تصدير البيانات</label>
+                        <button class="btn-submit" id="exportDataBtn" style="width: 100%;">تصدير جميع البيانات كملف Excel</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" id="closeAdminBtn">إغلاق</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- نافذة تأكيد الحذف -->
+    <div class="modal-overlay confirmation-modal" id="deleteConfirmationModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-trash-alt"></i> تأكيد الحذف</h2>
+                <button class="close-modal" id="closeDeleteModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirmation-text" id="deleteConfirmationText">
+                    هل أنت متأكد من حذف هذه المخالفة؟
+                </div>
+                <div class="confirmation-buttons">
+                    <button type="button" class="btn-cancel" id="cancelDeleteBtn">إلغاء</button>
+                    <button type="button" class="btn-confirm" id="confirmDeleteBtn">نعم، احذف</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // متغيرات النظام
+        let currentUser = null;
+        let violationsData = [];
+        let systemConfig = null;
+        let violationToDelete = null;
+        let violationToEdit = null;
+        let allUsers = [];
+        
+        // كلمة المرور الافتراضية للمشرف الرئيسي
+        const DEFAULT_ADMIN_PASSWORD = "admin123";
+        
+        // عناصر DOM
+        const mainContainer = document.getElementById('mainContainer');
+        const loginOverlay = document.getElementById('loginOverlay');
+        const userInfo = document.getElementById('userInfo');
+        const userName = document.getElementById('userName');
+        const userRole = document.getElementById('userRole');
+        const adminBtn = document.getElementById('adminBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const roomsContainer = document.getElementById('roomsContainer');
+        const unitFilter = document.getElementById('unitFilter');
+        const statusFilter = document.getElementById('statusFilter');
+        const searchBox = document.getElementById('searchBox');
+        const newCaseBtn = document.getElementById('newCaseBtn');
+        const newCaseModal = document.getElementById('newCaseModal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const submitNewCase = document.getElementById('submitNewCase');
+        const newCaseForm = document.getElementById('newCaseForm');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const deleteConfirmationModal = document.getElementById('deleteConfirmationModal');
+        const closeDeleteModal = document.getElementById('closeDeleteModal');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const deleteConfirmationText = document.getElementById('deleteConfirmationText');
+        const editCaseModal = document.getElementById('editCaseModal');
+        const closeEditModal = document.getElementById('closeEditModal');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const submitEditCase = document.getElementById('submitEditCase');
+        const editCaseForm = document.getElementById('editCaseForm');
+        const editRoomNumber = document.getElementById('editRoomNumber');
+        const editBedNumber = document.getElementById('editBedNumber');
+        const editUnitNumber = document.getElementById('editUnitNumber');
+        const editSupervisorName = document.getElementById('editSupervisorName');
+        const editStudentName = document.getElementById('editStudentName');
+        const editStudentId = document.getElementById('editStudentId');
+        const editViolationDetails = document.getElementById('editViolationDetails');
+        const editPriority = document.getElementById('editPriority');
+        const editStatus = document.getElementById('editStatus');
+        const editReason = document.getElementById('editReason');
+        const editReasonGroup = document.getElementById('editReasonGroup');
+        const adminModal = document.getElementById('adminModal');
+        const closeAdminModal = document.getElementById('closeAdminModal');
+        const closeAdminBtn = document.getElementById('closeAdminBtn');
+        const adminTabs = document.querySelectorAll('.admin-tab');
+        const usersSection = document.getElementById('usersSection');
+        const systemSection = document.getElementById('systemSection');
+        const newAdminName = document.getElementById('newAdminName');
+        const newAdminPassword = document.getElementById('newAdminPassword');
+        const addAdminBtn = document.getElementById('addAdminBtn');
+        const newAssistantName = document.getElementById('newAssistantName');
+        const generateAssistantBtn = document.getElementById('generateAssistantBtn');
+        const assistantCodeResult = document.getElementById('assistantCodeResult');
+        const generatedCode = document.getElementById('generatedCode');
+        const usersList = document.getElementById('usersList');
+        const currentPassword = document.getElementById('currentPassword');
+        const newPassword = document.getElementById('newPassword');
+        const changePasswordBtn = document.getElementById('changePasswordBtn');
+        const allowAssistantEdit = document.getElementById('allowAssistantEdit');
+        const autoCloseResolved = document.getElementById('autoCloseResolved');
+        const exportDataBtn = document.getElementById('exportDataBtn');
+        const loginTabs = document.querySelectorAll('.login-tab');
+        const adminLoginForm = document.getElementById('adminLoginForm');
+        const assistantLoginForm = document.getElementById('assistantLoginForm');
+        const adminName = document.getElementById('adminName');
+        const adminPassword = document.getElementById('adminPassword');
+        const assistantCode = document.getElementById('assistantCode');
+        const loginBtn = document.getElementById('loginBtn');
+        
+        // تعيين حالة المخالفة
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': 'قيد المتابعة',
+                'resolved': 'تمت المتابعة',
+                'failed': 'تعذرت المتابعة',
+                'closed': 'مغلقة'
+            };
+            return statusMap[status] || status;
+        }
+        
+        // إنشاء معرف فريد
+        function generateId() {
+            return Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+        
+        // إنشاء رمز سري للمساعد (6 أرقام)
+        function generateAssistantCode() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+        
+        // تحميل بيانات النظام
+        function loadSystemData() {
+            const localData = localStorage.getItem('violationSystemData');
+            if (localData) {
+                try {
+                    const data = JSON.parse(localData);
+                    allUsers = data.users || [];
+                    systemConfig = data.config || { 
+                        mainAdminPassword: DEFAULT_ADMIN_PASSWORD,
+                        allowAssistantEdit: true,
+                        autoCloseResolved: true
+                    };
+                } catch (error) {
+                    console.error("خطأ في تحميل بيانات النظام:", error);
+                    createDefaultSystemData();
+                }
+            } else {
+                createDefaultSystemData();
+            }
+        }
+        
+        // إنشاء بيانات النظام الافتراضية
+        function createDefaultSystemData() {
+            systemConfig = {
+                mainAdminPassword: DEFAULT_ADMIN_PASSWORD,
+                allowAssistantEdit: true,
+                autoCloseResolved: true
+            };
+            allUsers = [
+                {
+                    id: 'main_admin',
+                    name: 'المشرف الرئيسي',
+                    role: 'admin',
+                    password: DEFAULT_ADMIN_PASSWORD,
+                    createdAt: new Date().toISOString()
+                }
+            ];
+            saveSystemData();
+        }
+        
+        // حفظ بيانات النظام
+        function saveSystemData() {
+            const data = {
+                users: allUsers,
+                config: systemConfig
+            };
+            localStorage.setItem('violationSystemData', JSON.stringify(data));
+        }
+        
+        // تسجيل الدخول
+        function login(role, credentials) {
+            if (role === 'admin') {
+                // تسجيل دخول كمشرف
+                if (credentials.name === 'المشرف الرئيسي' && 
+                    credentials.password === (systemConfig.mainAdminPassword || DEFAULT_ADMIN_PASSWORD)) {
+                    currentUser = {
+                        id: 'main_admin',
+                        name: 'المشرف الرئيسي',
+                        role: 'admin',
+                        password: systemConfig.mainAdminPassword
+                    };
+                    showMainInterface();
+                    return true;
+                }
+                
+                // التحقق من المشرفين الآخرين
+                const admin = allUsers.find(user => 
+                    user.role === 'admin' && 
+                    user.name === credentials.name && 
+                    user.password === credentials.password
+                );
+                
+                if (admin) {
+                    currentUser = admin;
+                    showMainInterface();
+                    return true;
+                }
+            } else if (role === 'assistant') {
+                // تسجيل دخول كمساعد
+                const assistant = allUsers.find(user => 
+                    user.role === 'assistant' && 
+                    user.code === credentials.code
+                );
+                
+                if (assistant) {
+                    currentUser = assistant;
+                    showMainInterface();
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        
+        // تسجيل الخروج
+        function logout() {
+            currentUser = null;
+            loginOverlay.style.display = 'flex';
+            mainContainer.style.display = 'none';
+            violationsData = [];
+            roomsContainer.innerHTML = '';
+            localStorage.removeItem('currentUser');
+        }
+        
+        // عرض الواجهة الرئيسية
+        function showMainInterface() {
+            loginOverlay.style.display = 'none';
+            mainContainer.style.display = 'block';
+            
+            // تحديث معلومات المستخدم
+            userName.textContent = currentUser.name;
+            userRole.textContent = currentUser.role === 'admin' ? 'مشرف' : 'مساعد مشرف';
+            userRole.className = currentUser.role === 'admin' ? 'user-role role-admin' : 'user-role role-assistant';
+            
+            // إظهار/إخفاء زر الإدارة
+            adminBtn.style.display = currentUser.role === 'admin' ? 'flex' : 'none';
+            
+            // تهيئة النظام
+            populateUnitOptions();
+            updateSystemInfo();
+            loadData();
+            
+            // حفظ بيانات المستخدم الحالي
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            console.log(`تم تسجيل الدخول كـ ${currentUser.name} (${currentUser.role})`);
+        }
+        
+        // إنشاء قائمة الوحدات من 1 إلى 25
+        function populateUnitOptions() {
+            const unitSelect = document.getElementById('unitNumber');
+            const unitFilterSelect = document.getElementById('unitFilter');
+            const editUnitSelect = document.getElementById('editUnitNumber');
+            
+            // تنظيف الخيارات الحالية
+            while (unitSelect.options.length > 1) {
+                unitSelect.remove(1);
+            }
+            
+            while (unitFilterSelect.options.length > 1) {
+                unitFilterSelect.remove(1);
+            }
+            
+            while (editUnitSelect.options.length > 1) {
+                editUnitSelect.remove(1);
+            }
+            
+            // إضافة الوحدات من 1 إلى 25
+            for (let i = 1; i <= 25; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `الوحدة ${i}`;
+                unitSelect.appendChild(option.cloneNode(true));
+                unitFilterSelect.appendChild(option.cloneNode(true));
+                editUnitSelect.appendChild(option.cloneNode(true));
+            }
+        }
+        
+        // دالة لترتيب المخالفات حسب الأولوية (عالية أولاً)
+        function sortViolationsByPriority(violations) {
+            const priorityOrder = { high: 1, medium: 2, low: 3 };
+            
+            return violations.sort((a, b) => {
+                const priorityA = priorityOrder[a.priority] || 2;
+                const priorityB = priorityOrder[b.priority] || 2;
+                
+                if (priorityA !== priorityB) {
+                    return priorityA - priorityB;
+                }
+                
+                // إذا كانت الأولوية متساوية، فرز حسب التاريخ (الأحدث أولاً)
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+        }
+        
+        // إنشاء بطاقة مخالفة
+        function createViolationCard(violation) {
+            const card = document.createElement('div');
+            card.className = `room-card ${violation.status === 'closed' ? 'closed' : ''} ${violation.locked ? 'locked' : ''} priority-${violation.priority || 'medium'}`;
+            card.dataset.id = violation.id;
+            card.dataset.unit = violation.unit;
+            card.dataset.status = violation.status;
+            card.dataset.room = violation.room;
+            card.dataset.createdBy = violation.createdBy;
+            card.dataset.locked = violation.locked || false;
+            card.dataset.priority = violation.priority || 'medium';
+            
+            // تنسيق التاريخ
+            const date = violation.createdAt ? new Date(violation.createdAt) : new Date();
+            const formattedDate = date.toLocaleDateString('ar-SA');
+            const formattedTime = date.toLocaleTimeString('ar-SA', {hour: '2-digit', minute:'2-digit'});
+            
+            // التحقق من الصلاحيات بناءً على حالة القفل
+            const isOwner = currentUser && violation.createdBy === currentUser.id;
+            const isAdmin = currentUser && currentUser.role === 'admin';
+            const isLocked = violation.locked === true;
+            
+            // تحديد ما يمكن للمستخدم فعله
+            let canEdit = false;
+            let canDelete = false;
+            let canUpdateStatus = false;
+            let canClose = false;
+            let canToggleLock = false;
+            
+            if (isAdmin) {
+                // المشرف يمكنه تغيير الأولوية والحالة فقط
+                canEdit = false; // المشرف لا يمكنه تعديل البيانات الأساسية
+                canDelete = true;
+                canUpdateStatus = true;
+                canClose = violation.status !== 'closed';
+                canToggleLock = true;
+            } else if (isOwner && !isLocked) {
+                // المساعد صاحب الحالة يمكنه التعديل إذا لم تكن مقفلة
+                canEdit = systemConfig.allowAssistantEdit !== false && violation.status !== 'closed';
+                canDelete = violation.status !== 'closed';
+                canUpdateStatus = violation.status !== 'closed';
+                canClose = false;
+                canToggleLock = false;
+            }
+            
+            // إنشاء أزرار تغيير الحالة (3 خيارات فقط)
+            const statusButtons = violation.status !== 'closed' && !isLocked && (isAdmin || (isOwner && canUpdateStatus)) ? `
+                <div class="status-change-buttons">
+                    <button type="button" class="status-btn btn-pending ${violation.status === 'pending' ? 'active' : ''}" data-status="pending">قيد المتابعة</button>
+                    <button type="button" class="status-btn btn-resolved ${violation.status === 'resolved' ? 'active' : ''}" data-status="resolved">تمت المتابعة</button>
+                    <button type="button" class="status-btn btn-failed ${violation.status === 'failed' ? 'active' : ''}" data-status="failed">تعذرت المتابعة</button>
+                </div>
+            ` : '';
+            
+            // إنشاء حقل السبب (فقط لحالة "تعذرت المتابعة")
+            const reasonInput = violation.status === 'failed' && violation.reason ? 
+                `<textarea class="reason-input" placeholder="أدخل سبب تعذر المتابعة..." id="reason-${violation.id}" style="display: block;">${violation.reason}</textarea>` :
+                `<textarea class="reason-input" placeholder="أدخل سبب تعذر المتابعة..." id="reason-${violation.id}" style="display: none;"></textarea>`;
+            
+            // رسالة إذا كانت الحالة مقفلة
+            const lockedMessage = isLocked && !isAdmin ? `
+                <div class="locked-info">
+                    <i class="fas fa-lock"></i> هذه الحالة مقفلة. فقط المشرف يمكنه تعديلها.
+                </div>
+            ` : '';
+            
+            // زر القفل/الفتح (للمشرفين فقط)
+            const lockButton = isAdmin ? `
+                <button class="lock-btn ${isLocked ? 'locked' : ''} toggle-lock-btn" data-id="${violation.id}">
+                    <i class="fas fa-${isLocked ? 'unlock' : 'lock'}"></i> ${isLocked ? 'فتح' : 'قفل'} الحالة
+                </button>
+            ` : '';
+            
+            // إنشاء أزرار الإجراءات
+            const actionButtons = `
+                <div class="card-actions">
+                    ${canEdit ? `<button class="action-btn btn-edit edit-violation-btn" data-id="${violation.id}">
+                        <i class="fas fa-edit"></i> تعديل
+                    </button>` : ''}
+                    ${canDelete ? `<button class="action-btn btn-delete delete-violation-btn" data-id="${violation.id}">
+                        <i class="fas fa-trash"></i> حذف
+                    </button>` : ''}
+                    ${canUpdateStatus && !isLocked ? `<button class="action-btn btn-update update-status-btn" data-id="${violation.id}">
+                        <i class="fas fa-save"></i> تحديث الحالة
+                    </button>` : ''}
+                    ${canClose ? `<button class="action-btn btn-close close-violation-btn" data-id="${violation.id}">
+                        <i class="fas fa-lock"></i> إغلاق
+                    </button>` : ''}
+                    ${lockButton}
+                </div>
+            `;
+            
+            // العثور على اسم منشئ المخالفة
+            const creator = allUsers.find(user => user.id === violation.createdBy);
+            const creatorName = creator ? creator.name : 'مستخدم غير معروف';
+            const creatorCode = creator && creator.role === 'assistant' ? creator.code : '';
+            
+            // تحديد نص الأولوية
+            const priorityText = {
+                'high': 'عالية',
+                'medium': 'متوسطة',
+                'low': 'منخفضة'
+            };
+            
+            // إنشاء شارة الأولوية
+            const priorityBadge = `<span class="priority-badge priority-${violation.priority || 'medium'}-badge">
+                <i class="fas fa-${violation.priority === 'high' ? 'exclamation-triangle' : violation.priority === 'medium' ? 'exclamation-circle' : 'info-circle'}"></i>
+                ${priorityText[violation.priority] || 'متوسطة'}
+            </span>`;
+            
+            // عرض البيانات الإضافية
+            const additionalDetails = (violation.bedNumber || violation.studentName || violation.studentId) ? `
+                <div class="violation-details-grid">
+                    ${violation.bedNumber ? `
+                    <div class="detail-item">
+                        <div class="detail-label">رقم السرير</div>
+                        <div class="detail-value">${violation.bedNumber}</div>
+                    </div>
+                    ` : ''}
+                    ${violation.studentName ? `
+                    <div class="detail-item">
+                        <div class="detail-label">اسم المخالف</div>
+                        <div class="detail-value">${violation.studentName}</div>
+                    </div>
+                    ` : ''}
+                    ${violation.studentId ? `
+                    <div class="detail-item">
+                        <div class="detail-label">الرقم الجامعي</div>
+                        <div class="detail-value">${violation.studentId}</div>
+                    </div>
+                    ` : ''}
+                </div>
+            ` : '';
+            
+            card.innerHTML = `
+                ${isLocked ? '<div class="locked-indicator"><i class="fas fa-lock"></i></div>' : ''}
+                <div class="card-header">
+                    <div class="room-info">
+                        <div class="room-number">${violation.room}</div>
+                        <div class="room-details">
+                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                <h3>الغرفة ${violation.room}</h3>
+                                ${priorityBadge}
+                                <span class="lock-status ${isLocked ? 'locked' : ''}">${isLocked ? 'مقفلة' : 'مفتوحة'}</span>
+                            </div>
+                            <div class="unit-badge">الوحدة ${violation.unit}</div>
+                            <div class="added-by">
+                                <div>أضيفت بواسطة: ${creatorName}</div>
+                                ${creatorCode ? `<div class="assistant-code">رمز المساعد: ${creatorCode}</div>` : ''}
+                                <div>${formattedDate} - ${formattedTime}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="violation-title"><i class="fas fa-exclamation-triangle"></i> المخالفة</div>
+                    <div class="violation-text">${violation.violation}</div>
+                    
+                    ${additionalDetails}
+                    
+                    ${lockedMessage}
+                    
+                    ${violation.status !== 'closed' ? `
+                    <div class="status-change-section">
+                        ${statusButtons}
+                        ${reasonInput}
+                    </div>
+                    ` : ''}
+                </div>
+                <div class="card-footer">
+                    <div class="status status-${violation.status}">${getStatusText(violation.status)}</div>
+                    ${actionButtons}
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        // إضافة مستمعي الأحداث للبطاقة
+        function addCardEventListeners(card, violation) {
+            // أزرار تغيير الحالة
+            const statusBtns = card.querySelectorAll('.status-btn');
+            statusBtns.forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.room-card');
+                    
+                    // التحقق من عدم كون الحالة مقفلة للمساعدين
+                    if (currentUser.role === 'assistant' && card.dataset.locked === 'true') {
+                        alert('الحالة مقفلة. لا يمكنك تغيير حالتها.');
+                        return;
+                    }
+                    
+                    // إزالة النشاط من جميع الأزرار في هذه البطاقة
+                    card.querySelectorAll('.status-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // إضافة النشاط للزر المضغوط
+                    this.classList.add('active');
+                    
+                    // إظهار/إخفاء حقل السبب
+                    const reasonInput = card.querySelector('.reason-input');
+                    if (this.dataset.status === 'failed') {
+                        reasonInput.style.display = 'block';
+                    } else {
+                        reasonInput.style.display = 'none';
+                    }
+                });
+            });
+            
+            // زر تحديث الحالة
+            const updateBtn = card.querySelector('.update-status-btn');
+            if (updateBtn) {
+                updateBtn.addEventListener('click', function() {
+                    const cardId = this.dataset.id;
+                    const card = this.closest('.room-card');
+                    
+                    // التحقق من عدم كون الحالة مقفلة للمساعدين
+                    if (currentUser.role === 'assistant' && card.dataset.locked === 'true') {
+                        alert('الحالة مقفلة. لا يمكنك تغيير حالتها.');
+                        return;
+                    }
+                    
+                    const activeStatusBtn = card.querySelector('.status-btn.active');
+                    const newStatus = activeStatusBtn ? activeStatusBtn.dataset.status : '';
+                    const reasonInput = card.querySelector('.reason-input');
+                    const reason = reasonInput ? reasonInput.value : '';
+                    
+                    if (newStatus) {
+                        updateViolationStatus(cardId, newStatus, reason);
+                        alert(`تم تحديث حالة الغرفة ${card.dataset.room} إلى "${getStatusText(newStatus)}"`);
+                    } else {
+                        alert('الرجاء تحديد حالة جديدة للمخالفة');
+                    }
+                });
+            }
+            
+            // زر التعديل
+            const editBtn = card.querySelector('.edit-violation-btn');
+            if (editBtn) {
+                editBtn.addEventListener('click', function() {
+                    const cardId = this.dataset.id;
+                    const card = this.closest('.room-card');
+                    
+                    // التحقق من عدم كون الحالة مقفلة للمساعدين
+                    if (currentUser.role === 'assistant' && card.dataset.locked === 'true') {
+                        alert('الحالة مقفلة. لا يمكنك تعديلها.');
+                        return;
+                    }
+                    
+                    openEditModal(cardId);
+                });
+            }
+            
+            // زر الحذف
+            const deleteBtn = card.querySelector('.delete-violation-btn');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function() {
+                    const cardId = this.dataset.id;
+                    const card = this.closest('.room-card');
+                    
+                    // التحقق من عدم كون الحالة مقفلة للمساعدين
+                    if (currentUser.role === 'assistant' && card.dataset.locked === 'true') {
+                        alert('الحالة مقفلة. لا يمكنك حذفها.');
+                        return;
+                    }
+                    
+                    openDeleteConfirmation(cardId);
+                });
+            }
+            
+            // زر الإغلاق (للمشرفين فقط)
+            const closeBtn = card.querySelector('.close-violation-btn');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function() {
+                    const cardId = this.dataset.id;
+                    if (confirm('هل أنت متأكد من إغلاق هذه المخالفة؟ بعد الإغلاق لن يتمكن المساعد من تعديلها.')) {
+                        updateViolationStatus(cardId, 'closed', 'تم إغلاق الحالة بواسطة المشرف');
+                        alert('تم إغلاق المخالفة بنجاح');
+                    }
+                });
+            }
+            
+            // زر القفل/الفتح (للمشرفين فقط)
+            const lockBtn = card.querySelector('.toggle-lock-btn');
+            if (lockBtn) {
+                lockBtn.addEventListener('click', function() {
+                    const cardId = this.dataset.id;
+                    const isLocked = this.classList.contains('locked');
+                    const action = isLocked ? 'فتح' : 'قفل';
+                    
+                    if (confirm(`هل أنت متأكد من ${action} هذه الحالة؟`)) {
+                        toggleViolationLock(cardId, !isLocked);
+                    }
+                });
+            }
+        }
+        
+        // دالة تبديل حالة القفل
+        function toggleViolationLock(violationId, lockStatus) {
+            const violation = violationsData.find(v => v.id === violationId);
+            if (violation) {
+                violation.locked = lockStatus;
+                violation.lockedBy = currentUser.id;
+                violation.lockedAt = new Date();
+                
+                renderViolations();
+                saveDataLocally();
+                
+                const action = lockStatus ? 'قفل' : 'فتح';
+                alert(`تم ${action} الحالة بنجاح`);
+            }
+        }
+        
+        // عرض المخالفات
+        function renderViolations() {
+            roomsContainer.innerHTML = '';
+            
+            if (violationsData.length === 0) {
+                roomsContainer.innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-inbox"></i>
+                        <p>لا توجد مخالفات بعد. كن أول من يضيف مخالفة!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // تصفية المخالفات حسب الصلاحيات
+            let filteredViolations = violationsData;
+            if (currentUser.role === 'assistant') {
+                filteredViolations = violationsData.filter(violation => 
+                    violation.createdBy === currentUser.id
+                );
+            }
+            
+            // فرز حسب الأولوية (عالية أولاً) ثم التاريخ
+            filteredViolations = sortViolationsByPriority(filteredViolations);
+            
+            filteredViolations.forEach(violation => {
+                const card = createViolationCard(violation);
+                roomsContainer.appendChild(card);
+                addCardEventListeners(card, violation);
+            });
+            
+            // تحديث الإحصائيات
+            updateStats();
+        }
+        
+        // تحديث حالة المخالفة
+        function updateViolationStatus(id, newStatus, reason = '') {
+            const violation = violationsData.find(v => v.id === id);
+            if (violation) {
+                violation.status = newStatus;
+                if (newStatus === 'failed') {
+                    violation.reason = reason;
+                } else if (newStatus === 'closed') {
+                    violation.locked = true; // قفل تلقائي عند الإغلاق
+                    violation.lockedBy = currentUser.id;
+                    violation.lockedAt = new Date();
+                }
+                violation.updatedAt = new Date();
+                violation.updatedBy = currentUser.id;
+                
+                renderViolations();
+                saveDataLocally();
+                
+                alert(`تم تحديث حالة الغرفة ${violation.room} إلى "${getStatusText(newStatus)}"`);
+            }
+        }
+        
+        // حذف مخالفة
+        function deleteViolation(id) {
+            const violation = violationsData.find(v => v.id === id);
+            if (violation) {
+                violationsData = violationsData.filter(v => v.id !== id);
+                renderViolations();
+                saveDataLocally();
+                alert('تم حذف المخالفة بنجاح');
+                violationToDelete = null;
+            }
+        }
+        
+        // فتح نافذة تأكيد الحذف
+        function openDeleteConfirmation(violationId) {
+            const violation = violationsData.find(v => v.id === violationId);
+            if (violation) {
+                violationToDelete = violationId;
+                deleteConfirmationText.textContent = `هل أنت متأكد من حذف مخالفة الغرفة ${violation.room}؟`;
+                deleteConfirmationModal.style.display = 'flex';
+            }
+        }
+        
+        // فتح نافذة تعديل المخالفة
+        function openEditModal(violationId) {
+            const violation = violationsData.find(v => v.id === violationId);
+            if (violation) {
+                violationToEdit = violation;
+                
+                // التحقق من صلاحية التعديل
+                if (currentUser.role === 'assistant' && violation.locked) {
+                    alert('هذه الحالة مقفلة. لا يمكنك تعديلها.');
+                    return;
+                }
+                
+                // تعبئة الحقول ببيانات المخالفة
+                editRoomNumber.value = violation.room;
+                editBedNumber.value = violation.bedNumber || '';
+                editUnitNumber.value = violation.unit;
+                editSupervisorName.value = violation.supervisorName || '';
+                editStudentName.value = violation.studentName || '';
+                editStudentId.value = violation.studentId || '';
+                editViolationDetails.value = violation.violation;
+                editPriority.value = violation.priority || 'medium';
+                editStatus.value = violation.status;
+                editReason.value = violation.reason || '';
+                
+                // إذا كان مشرفاً، يتم تعطيل حقول البيانات الأساسية
+                if (currentUser.role === 'admin') {
+                    editRoomNumber.readOnly = true;
+                    editBedNumber.disabled = true;
+                    editUnitNumber.disabled = true;
+                    editSupervisorName.readOnly = true;
+                    editStudentName.readOnly = true;
+                    editStudentId.readOnly = true;
+                    editViolationDetails.readOnly = true;
+                    editStatus.disabled = false;
+                    
+                    // إضافة استايل للحقول المعطلة
+                    const disabledFields = [editRoomNumber, editSupervisorName, editStudentName, editStudentId, editViolationDetails];
+                    disabledFields.forEach(field => {
+                        field.style.backgroundColor = '#f8f9fa';
+                        field.style.cursor = 'not-allowed';
+                    });
+                    
+                    // إظهار/إخفاء حقل السبب
+                    if (violation.status === 'failed') {
+                        editReasonGroup.style.display = 'block';
+                    } else {
+                        editReasonGroup.style.display = 'none';
+                    }
+                    
+                    // إضافة مستمع حدث لتغيير حالة المتابعة
+                    editStatus.onchange = function() {
+                        if (this.value === 'failed') {
+                            editReasonGroup.style.display = 'block';
+                        } else {
+                            editReasonGroup.style.display = 'none';
+                        }
+                    };
+                } else {
+                    // المساعد لا يمكنه تغيير حالة المتابعة من نافذة التعديل
+                    editStatus.disabled = true;
+                    editStatus.style.backgroundColor = '#f8f9fa';
+                    editStatus.style.cursor = 'not-allowed';
+                    editReasonGroup.style.display = 'none';
+                }
+                
+                // فتح النافذة
+                editCaseModal.style.display = 'flex';
+            }
+        }
+        
+        // حفظ التعديلات على المخالفة مع مراعاة صلاحيات المشرف
+        function saveViolationChanges() {
+            if (!violationToEdit) return;
+            
+            // المشرف يمكنه فقط تغيير الأولوية والحالة
+            if (currentUser.role === 'admin') {
+                // فقط الأولوية والحالة
+                violationToEdit.priority = editPriority.value;
+                violationToEdit.status = editStatus.value;
+                violationToEdit.reason = editStatus.value === 'failed' ? editReason.value : '';
+                violationToEdit.updatedAt = new Date();
+                violationToEdit.updatedBy = currentUser.id;
+                
+                // إذا قام المشرف بتغيير الحالة إلى "مغلقة"، يتم قفلها تلقائياً
+                if (editStatus.value === 'closed' && !violationToEdit.locked) {
+                    violationToEdit.locked = true;
+                    violationToEdit.lockedBy = currentUser.id;
+                    violationToEdit.lockedAt = new Date();
+                }
+            } else {
+                // المساعد يمكنه تعديل كل شيء (ما عدا الحالة)
+                violationToEdit.room = editRoomNumber.value;
+                violationToEdit.bedNumber = editBedNumber.value;
+                violationToEdit.unit = editUnitNumber.value;
+                violationToEdit.supervisorName = editSupervisorName.value;
+                violationToEdit.studentName = editStudentName.value;
+                violationToEdit.studentId = editStudentId.value;
+                violationToEdit.violation = editViolationDetails.value;
+                violationToEdit.priority = editPriority.value;
+                violationToEdit.updatedAt = new Date();
+                violationToEdit.updatedBy = currentUser.id;
+            }
+            
+            renderViolations();
+            saveDataLocally();
+            
+            editCaseModal.style.display = 'none';
+            violationToEdit = null;
+            alert('تم حفظ التعديلات بنجاح');
+        }
+        
+        // تحديث الإحصائيات
+        function updateStats() {
+            let filteredViolations = violationsData;
+            if (currentUser.role === 'assistant') {
+                filteredViolations = violationsData.filter(violation => 
+                    violation.createdBy === currentUser.id
+                );
+            }
+            
+            const total = filteredViolations.length;
+            const pending = filteredViolations.filter(v => v.status === 'pending').length;
+            const resolved = filteredViolations.filter(v => v.status === 'resolved').length;
+            const failed = filteredViolations.filter(v => v.status === 'failed').length;
+            const closed = filteredViolations.filter(v => v.status === 'closed').length;
+            const uniqueUnits = new Set(filteredViolations.map(v => v.unit)).size;
+            
+            // تحديث العناصر في الصفحة
+            document.getElementById('totalCases').textContent = total;
+            document.getElementById('totalUnits').textContent = uniqueUnits;
+            document.getElementById('statsTotalCases').textContent = total;
+            document.getElementById('statsTotalUnits').textContent = uniqueUnits;
+            document.getElementById('statsPendingCases').textContent = pending;
+            document.getElementById('statsResolvedCases').textContent = resolved + closed;
+        }
+        
+        // تصفية المخالفات
+        function filterViolations() {
+            const selectedUnit = unitFilter.value;
+            const selectedStatus = statusFilter.value;
+            const searchText = searchBox.value.toLowerCase();
+            
+            // الحصول على المخالفات المعروضة حسب الصلاحيات
+            let filteredViolations = violationsData;
+            if (currentUser.role === 'assistant') {
+                filteredViolations = violationsData.filter(violation => 
+                    violation.createdBy === currentUser.id
+                );
+            }
+            
+            // تطبيق التصفية
+            const filteredIds = filteredViolations
+                .filter(violation => {
+                    let shouldShow = true;
+                    
+                    // تصفية حسب الوحدة
+                    if (selectedUnit !== 'all' && violation.unit.toString() !== selectedUnit) {
+                        shouldShow = false;
+                    }
+                    
+                    // تصفية حسب الحالة
+                    if (selectedStatus !== 'all' && violation.status !== selectedStatus) {
+                        shouldShow = false;
+                    }
+                    
+                    // تصفية حسب البحث
+                    if (searchText && !violation.room.toString().includes(searchText)) {
+                        shouldShow = false;
+                    }
+                    
+                    return shouldShow;
+                })
+                .map(v => v.id);
+            
+            // إظهار/إخفاء البطاقات
+            document.querySelectorAll('.room-card').forEach(card => {
+                card.style.display = filteredIds.includes(card.dataset.id) ? 'block' : 'none';
+            });
+        }
+        
+        // إضافة مخالفة جديدة مع البيانات الإضافية
+        function addNewViolation(room, bedNumber, unit, supervisorName, studentName, studentId, violation, priority) {
+            const violationId = generateId();
+            
+            const newViolation = {
+                id: violationId,
+                room: room,
+                bedNumber: bedNumber,
+                unit: unit,
+                supervisorName: supervisorName,
+                studentName: studentName,
+                studentId: studentId,
+                violation: violation,
+                status: 'pending',
+                priority: priority,
+                reason: '',
+                locked: false,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                createdBy: currentUser.id,
+                systemId: 'main_system'
+            };
+            
+            violationsData.unshift(newViolation);
+            renderViolations();
+            saveDataLocally();
+            
+            newCaseModal.style.display = 'none';
+            newCaseForm.reset();
+            alert(`تم إضافة مخالفة جديدة للغرفة ${room}`);
+        }
+        
+        // تحديث معلومات النظام
+        function updateSystemInfo() {
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleString('ar-SA');
+        }
+        
+        // تحميل البيانات
+        function loadData() {
+            loadingIndicator.style.display = 'block';
+            
+            // تحميل البيانات المحلية
+            const localData = localStorage.getItem('violationsDataLocal');
+            if (localData) {
+                try {
+                    violationsData = JSON.parse(localData);
+                    renderViolations();
+                } catch (error) {
+                    console.error('خطأ في تحميل البيانات المحلية:', error);
+                    violationsData = [];
+                }
+            } else {
+                violationsData = [];
+            }
+            
+            loadingIndicator.style.display = 'none';
+            updateSystemInfo();
+        }
+        
+        // حفظ البيانات محلياً
+        function saveDataLocally() {
+            localStorage.setItem('violationsDataLocal', JSON.stringify(violationsData));
+        }
+        
+        // تحديث قائمة المستخدمين
+        function updateUsersList() {
+            usersList.innerHTML = '';
+            
+            if (allUsers.length === 0) {
+                usersList.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">لا يوجد مستخدمين</div>';
+                return;
+            }
+            
+            allUsers.forEach(user => {
+                const userItem = document.createElement('div');
+                userItem.className = 'user-item';
+                
+                userItem.innerHTML = `
+                    <div class="user-info-small">
+                        <div class="user-name">${user.name}</div>
+                        <div>
+                            <span class="user-role-badge ${user.role === 'admin' ? 'role-admin-badge' : 'role-assistant-badge'}">
+                                ${user.role === 'admin' ? 'مشرف' : 'مساعد مشرف'}
+                            </span>
+                            ${user.code && user.role === 'assistant' ? `<span style="font-size: 11px; color: #3498db; margin-right: 10px;">الرمز: ${user.code}</span>` : ''}
+                        </div>
+                        <small style="color: #999;">تم الإنشاء: ${new Date(user.createdAt).toLocaleDateString('ar-SA')}</small>
+                    </div>
+                    <div>
+                        ${user.id !== 'main_admin' ? `<button class="action-btn btn-delete delete-user-btn" data-id="${user.id}" style="padding: 5px 10px; font-size: 12px;">
+                            <i class="fas fa-trash"></i> حذف
+                        </button>` : ''}
+                    </div>
+                `;
+                
+                usersList.appendChild(userItem);
+            });
+            
+            // إضافة مستمعي الأحداث لأزرار حذف المستخدمين
+            document.querySelectorAll('.delete-user-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const userId = this.dataset.id;
+                    if (confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
+                        deleteUser(userId);
+                    }
+                });
+            });
+        }
+        
+        // إضافة مشرف جديد
+        function addAdmin(name, password) {
+            const adminId = generateId();
+            const newAdmin = {
+                id: adminId,
+                name: name,
+                role: 'admin',
+                password: password,
+                createdAt: new Date().toISOString()
+            };
+            
+            allUsers.push(newAdmin);
+            saveSystemData();
+            updateUsersList();
+            
+            alert(`تم إضافة المشرف ${name} بنجاح`);
+            newAdminName.value = '';
+            newAdminPassword.value = '';
+        }
+        
+        // إنشاء مساعد جديد
+        function generateAssistant(name) {
+            const code = generateAssistantCode();
+            const assistantId = generateId();
+            const newAssistant = {
+                id: assistantId,
+                name: name,
+                role: 'assistant',
+                code: code,
+                createdAt: new Date().toISOString()
+            };
+            
+            allUsers.push(newAssistant);
+            saveSystemData();
+            updateUsersList();
+            
+            generatedCode.textContent = code;
+            assistantCodeResult.style.display = 'block';
+            newAssistantName.value = '';
+            
+            alert(`تم إنشاء المساعد ${name} بنجاح. الرمز السري: ${code}`);
+        }
+        
+        // حذف مستخدم
+        function deleteUser(userId) {
+            allUsers = allUsers.filter(user => user.id !== userId);
+            saveSystemData();
+            updateUsersList();
+            alert('تم حذف المستخدم بنجاح');
+        }
+        
+        // تغيير كلمة مرور المشرف الرئيسي
+        function changeAdminPassword(currentPass, newPass) {
+            if (currentPass !== systemConfig.mainAdminPassword) {
+                alert('كلمة المرور الحالية غير صحيحة');
+                return false;
+            }
+            
+            systemConfig.mainAdminPassword = newPass;
+            saveSystemData();
+            alert('تم تغيير كلمة المرور بنجاح');
+            currentPassword.value = '';
+            newPassword.value = '';
+            return true;
+        }
+        
+        // تهيئة الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("جاري تهيئة النظام...");
+            
+            // تحميل بيانات النظام
+            loadSystemData();
+            
+            // تعيين التاريخ الحالي
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('ar-SA');
+            
+            // التحقق من تسجيل الدخول السابق
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                    showMainInterface();
+                } catch (error) {
+                    console.error("خطأ في تحميل بيانات المستخدم:", error);
+                }
+            }
+            
+            // أحداث تبويبات تسجيل الدخول
+            loginTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.dataset.tab;
+                    
+                    // إزالة النشاط من جميع التبويبات
+                    loginTabs.forEach(t => t.classList.remove('active'));
+                    
+                    // إضافة النشاط للتبويب المحدد
+                    this.classList.add('active');
+                    
+                    // إظهار النموذج المناسب
+                    adminLoginForm.classList.remove('active');
+                    assistantLoginForm.classList.remove('active');
+                    
+                    if (tabName === 'admin') {
+                        adminLoginForm.classList.add('active');
+                    } else {
+                        assistantLoginForm.classList.add('active');
+                    }
+                });
+            });
+            
+            // حدث تسجيل الدخول
+            loginBtn.addEventListener('click', function() {
+                const activeTab = document.querySelector('.login-tab.active');
+                const tabName = activeTab.dataset.tab;
+                
+                if (tabName === 'admin') {
+                    const name = adminName.value;
+                    const password = adminPassword.value;
+                    
+                    if (!name || !password) {
+                        alert('الرجاء إدخال اسم المشرف وكلمة المرور');
+                        return;
+                    }
+                    
+                    if (login('admin', { name: name, password: password })) {
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    } else {
+                        alert('اسم المشرف أو كلمة المرور غير صحيحة');
+                    }
+                } else {
+                    const code = assistantCode.value;
+                    if (!code) {
+                        alert('الرجاء إدخال الرمز السري');
+                        return;
+                    }
+                    
+                    if (login('assistant', { code })) {
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    } else {
+                        alert('الرمز السري غير صحيح');
+                    }
+                }
+            });
+            
+            // حدث تسجيل الخروج
+            logoutBtn.addEventListener('click', function() {
+                logout();
+            });
+            
+            // إضافة مستمعي الأحداث للتصفية
+            unitFilter.addEventListener('change', filterViolations);
+            statusFilter.addEventListener('change', filterViolations);
+            searchBox.addEventListener('input', filterViolations);
+            
+            // فتح نافذة إنشاء حالة جديدة
+            newCaseBtn.addEventListener('click', function() {
+                console.log("فتح نافذة إنشاء حالة جديدة");
+                newCaseModal.style.display = 'flex';
+            });
+            
+            // إغلاق نافذة إنشاء حالة جديدة
+            closeModal.addEventListener('click', function() {
+                newCaseModal.style.display = 'none';
+                newCaseForm.reset();
+            });
+            
+            cancelBtn.addEventListener('click', function() {
+                newCaseModal.style.display = 'none';
+                newCaseForm.reset();
+            });
+            
+            // إرسال نموذج إنشاء حالة جديدة
+            submitNewCase.addEventListener('click', function() {
+                const roomNumber = document.getElementById('roomNumber').value;
+                const bedNumber = document.getElementById('bedNumber').value;
+                const unitNumber = document.getElementById('unitNumber').value;
+                const supervisorName = document.getElementById('supervisorName').value;
+                const studentName = document.getElementById('studentName').value;
+                const studentId = document.getElementById('studentId').value;
+                const violationDetails = document.getElementById('violationDetails').value;
+                const priority = document.getElementById('priority').value;
+                
+                if (roomNumber && unitNumber && supervisorName && violationDetails) {
+                    // إضافة مخالفة جديدة
+                    addNewViolation(
+                        roomNumber,
+                        bedNumber,
+                        unitNumber,
+                        supervisorName,
+                        studentName,
+                        studentId,
+                        violationDetails,
+                        priority
+                    );
+                } else {
+                    alert('الرجاء تعبئة جميع الحقول المطلوبة');
+                }
+            });
+            
+            // أحداث نافذة تأكيد الحذف
+            closeDeleteModal.addEventListener('click', function() {
+                deleteConfirmationModal.style.display = 'none';
+                violationToDelete = null;
+            });
+            
+            cancelDeleteBtn.addEventListener('click', function() {
+                deleteConfirmationModal.style.display = 'none';
+                violationToDelete = null;
+            });
+            
+            confirmDeleteBtn.addEventListener('click', function() {
+                if (violationToDelete) {
+                    deleteViolation(violationToDelete);
+                    deleteConfirmationModal.style.display = 'none';
+                }
+            });
+            
+            // أحداث نافذة تعديل المخالفة
+            closeEditModal.addEventListener('click', function() {
+                editCaseModal.style.display = 'none';
+                violationToEdit = null;
+            });
+            
+            cancelEditBtn.addEventListener('click', function() {
+                editCaseModal.style.display = 'none';
+                violationToEdit = null;
+            });
+            
+            submitEditCase.addEventListener('click', function() {
+                if (!editRoomNumber.value || !editUnitNumber.value || !editSupervisorName.value || !editViolationDetails.value) {
+                    alert('الرجاء تعبئة جميع الحقول المطلوبة');
+                    return;
+                }
+                saveViolationChanges();
+            });
+            
+            // فتح نافذة الإدارة
+            adminBtn.addEventListener('click', function() {
+                updateUsersList();
+                adminModal.style.display = 'flex';
+            });
+            
+            // إغلاق نافذة الإدارة
+            closeAdminModal.addEventListener('click', function() {
+                adminModal.style.display = 'none';
+            });
+            
+            closeAdminBtn.addEventListener('click', function() {
+                adminModal.style.display = 'none';
+            });
+            
+            // أحداث تبويبات الإدارة
+            adminTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.dataset.tab;
+                    
+                    // إزالة النشاط من جميع التبويبات
+                    adminTabs.forEach(t => t.classList.remove('active'));
+                    
+                    // إضافة النشاط للتبويب المحدد
+                    this.classList.add('active');
+                    
+                    // إظهار القسم المناسب
+                    usersSection.classList.remove('active');
+                    systemSection.classList.remove('active');
+                    
+                    if (tabName === 'users') {
+                        usersSection.classList.add('active');
+                    } else {
+                        systemSection.classList.add('active');
+                    }
+                });
+            });
+            
+            // إضافة مشرف جديد
+            addAdminBtn.addEventListener('click', function() {
+                const name = newAdminName.value;
+                const password = newAdminPassword.value;
+                
+                if (!name || !password) {
+                    alert('الرجاء إدخال اسم المشرف وكلمة المرور');
+                    return;
+                }
+                
+                addAdmin(name, password);
+            });
+            
+            // إنشاء مساعد جديد
+            generateAssistantBtn.addEventListener('click', function() {
+                const name = newAssistantName.value;
+                
+                if (!name) {
+                    alert('الرجاء إدخال اسم المساعد');
+                    return;
+                }
+                
+                generateAssistant(name);
+            });
+            
+            // تغيير كلمة المرور
+            changePasswordBtn.addEventListener('click', function() {
+                const currentPass = currentPassword.value;
+                const newPass = newPassword.value;
+                
+                if (!currentPass || !newPass) {
+                    alert('الرجاء إدخال كلمة المرور الحالية والجديدة');
+                    return;
+                }
+                
+                changeAdminPassword(currentPass, newPass);
+            });
+            
+            // حفظ إعدادات النظام
+            allowAssistantEdit.addEventListener('change', function() {
+                systemConfig.allowAssistantEdit = this.checked;
+                saveSystemData();
+            });
+            
+            autoCloseResolved.addEventListener('change', function() {
+                systemConfig.autoCloseResolved = this.checked;
+                saveSystemData();
+            });
+            
+            // تصدير البيانات
+            exportDataBtn.addEventListener('click', function() {
+                // إنشاء ملف CSV للتصدير
+                let csvContent = "data:text/csv;charset=utf-8,";
+                csvContent += "رقم الغرفة,رقم السرير,الوحدة,اسم المشرف,اسم المخالف,الرقم الجامعي,المخالفة,الحالة,الأولوية,تاريخ الإنشاء\n";
+                
+                violationsData.forEach(violation => {
+                    const row = [
+                        violation.room,
+                        violation.bedNumber || '',
+                        violation.unit,
+                        violation.supervisorName || '',
+                        violation.studentName || '',
+                        violation.studentId || '',
+                        `"${violation.violation.replace(/"/g, '""')}"`,
+                        getStatusText(violation.status),
+                        violation.priority,
+                        new Date(violation.createdAt).toLocaleDateString('ar-SA')
+                    ].join(',');
+                    csvContent += row + "\n";
+                });
+                
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "مخالفات_سكنية.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                alert('تم تصدير البيانات بنجاح');
+            });
+            
+            // حفظ البيانات محلياً عند إغلاق الصفحة
+            window.addEventListener('beforeunload', function() {
+                saveDataLocally();
+            });
+            
+            console.log("تم تهيئة النظام بنجاح");
+        });
+    </script>
+</body>
+</html>
